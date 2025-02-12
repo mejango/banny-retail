@@ -174,7 +174,7 @@ contract DeployScript is Script, Sphinx {
             REVAutoIssuance[] memory autoIssuances = new REVAutoIssuance[](1);
             autoIssuances[0] = REVAutoIssuance({
                 chainId: PREMINT_CHAIN_ID,
-                count: uint104(40_000 * DECIMAL_MULTIPLIER),
+                count: uint104(400_000 * DECIMAL_MULTIPLIER),
                 beneficiary: OPERATOR
             });
 
@@ -183,7 +183,7 @@ contract DeployScript is Script, Sphinx {
                 autoIssuances: autoIssuances,
                 splitPercent: 3800, // 38%
                 splits: splits,
-                initialIssuance: uint112(1000 * DECIMAL_MULTIPLIER),
+                initialIssuance: uint112(10_000 * DECIMAL_MULTIPLIER),
                 issuanceCutFrequency: 60 days,
                 issuanceCutPercent: 380_000_000, // 38%,
                 cashOutTaxRate: 1000, // 0.1
@@ -195,7 +195,7 @@ contract DeployScript is Script, Sphinx {
             REVAutoIssuance[] memory autoIssuances = new REVAutoIssuance[](1);
             autoIssuances[0] = REVAutoIssuance({
                 chainId: PREMINT_CHAIN_ID,
-                count: uint104(100_000 * DECIMAL_MULTIPLIER),
+                count: uint104(1_000_000 * DECIMAL_MULTIPLIER),
                 beneficiary: OPERATOR
             });
             stageConfigurations[1] = REVStageConfig({
