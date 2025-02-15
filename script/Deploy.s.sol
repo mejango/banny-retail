@@ -80,11 +80,11 @@ contract DeployScript is Script, Sphinx {
     uint24 NAKED_BANNY_CATEGORY = 0;
     address OPERATOR;
     address TRUSTED_FORWARDER;
-    uint256 TIME_UNTIL_START = 3 hours;
+    uint256 TIME_UNTIL_START = 7 days;
 
     function configureSphinx() public override {
         // TODO: Update to contain revnet devs.
-        sphinxConfig.projectName = "bannyverse-core-testnet";
+        sphinxConfig.projectName = "banny-testnet";
         sphinxConfig.mainnets = ["ethereum", "optimism", "base", "arbitrum"];
         sphinxConfig.testnets = ["ethereum_sepolia", "optimism_sepolia", "base_sepolia", "arbitrum_sepolia"];
     }
@@ -174,10 +174,15 @@ contract DeployScript is Script, Sphinx {
             REVAutoIssuance[] memory autoIssuances = new REVAutoIssuance[](1);
             autoIssuances[0] = REVAutoIssuance({
                 chainId: PREMINT_CHAIN_ID,
-                count: uint104(40_000 * DECIMAL_MULTIPLIER),
+                count: uint104(50_000 * DECIMAL_MULTIPLIER), // 20% to jbdao, contributors.
                 beneficiary: OPERATOR
             });
 
+            // lt: short. 120 days whole stage. firesale. 30 day cuts. steeper issuance cut. 
+            // start the collection in the future. 7 days-ish.
+            // maybe 360-420 days stage 1
+            // decrease every 60 days for 420 days. 
+            // 10,000 => 2,400 / ETH
             stageConfigurations[0] = REVStageConfig({
                 startsAtOrAfter: uint40(block.timestamp + TIME_UNTIL_START),
                 autoIssuances: autoIssuances,
@@ -195,9 +200,11 @@ contract DeployScript is Script, Sphinx {
             REVAutoIssuance[] memory autoIssuances = new REVAutoIssuance[](1);
             autoIssuances[0] = REVAutoIssuance({
                 chainId: PREMINT_CHAIN_ID,
-                count: uint104(100_000 * DECIMAL_MULTIPLIER),
+                count: uint104(110_000 * DECIMAL_MULTIPLIER),
                 beneficiary: OPERATOR
             });
+
+            // decrease by a smaller percent more frequently. 30 days, 7%-ish.
             stageConfigurations[1] = REVStageConfig({
                 startsAtOrAfter: uint40(stageConfigurations[0].startsAtOrAfter + 600 days),
                 autoIssuances: autoIssuances,
@@ -212,7 +219,7 @@ contract DeployScript is Script, Sphinx {
         }
 
         stageConfigurations[2] = REVStageConfig({
-            startsAtOrAfter: uint40(stageConfigurations[1].startsAtOrAfter + (6000 days)),
+            startsAtOrAfter: uint40(stageConfigurations[1].startsAtOrAfter + (1200 days)),
             autoIssuances: new REVAutoIssuance[](0),
             splitPercent: 0,
             splits: splits,

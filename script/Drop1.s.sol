@@ -319,14 +319,14 @@ contract Drop1Script is Script, Sphinx {
         });
         // Flops
         names[14] = "Flops";
-        svgHashes[14] = bytes32(0x6f3fd7e83771bc0765a9394efac4993dc76d5f8584364188c10b8290350ada0a);
+        svgHashes[14] = bytes32(0xc003e4c432071b0a86a2b1464cc65a960b7f6e647b1ee827f4e639e2c1a142d7);
         products[14] = JB721TierConfig({
             price: uint104(1 * (10 ** (decimals - 3))),
             initialSupply: 500,
             votingUnits: 0,
             reserveFrequency: 10,
             reserveBeneficiary: address(0),
-            encodedIPFSUri: bytes32(0x344a9f345f9720471dec07e1a9e4e9ab856943ab456dcd701b68d8a06b52a336),
+            encodedIPFSUri: bytes32(0x27b1a38dab9e8d0f2c9ab19cc5d7d13f47a362274716d8e4757e7094910ba3f1),
             category: 7,
             discountPercent: 0,
             cannotIncreaseDiscountPercent: false,

@@ -1,6 +1,6 @@
 {
     "name": "@bannyverse/core",
-    "version": "0.0.44",
+    "version": "0.0.46",
     "license": "MIT",
     "repository": {
         "type": "git",
@@ -15,12 +15,12 @@
         "deploy:mainnets": "source ./.env && export START_TIME=$(date +%s) && npx sphinx propose ./script/Deploy.s.sol --networks mainnets",
         "deploy:testnets": "source ./.env && export START_TIME=$(date +%s) && npx sphinx propose ./script/Deploy.s.sol --networks testnets",
         "deploy:testnets:drop:1": "source ./.env && npx sphinx propose ./script/Drop1.s.sol --networks testnets",
-        "artifacts": "source ./.env && npx sphinx artifacts --org-id 'ea165b21-7cdc-4d7b-be59-ecdd4c26bee4' --project-name 'bannyverse-core-testnet'"
+        "artifacts": "source ./.env && npx sphinx artifacts --org-id 'ea165b21-7cdc-4d7b-be59-ecdd4c26bee4' --project-name 'banny-testnet'"
     },
     "dependencies": {
         "@bananapus/721-hook": "^0.0.32",
         "@bananapus/buyback-hook": "^0.0.27",
-        "@bananapus/core": "^0.0.45",
+        "@bananapus/core": "^0.0.46",
         "@bananapus/ownable": "^0.0.8",
         "@bananapus/permission-ids": "^0.0.17",
         "@bananapus/suckers": "^0.0.32",

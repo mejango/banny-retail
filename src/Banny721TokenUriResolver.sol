@@ -711,22 +711,33 @@ contract Banny721TokenUriResolver is
             // Keep a reference to the category of the outfit being iterated on.
             uint256 category;
 
+            // Keep a reference to the upc of the outfit being iterated on.
+            uint256 upc;
+
             // If the outfit is within the bounds of the number of outfits there are, add it normally.
             if (i < numberOfOutfits) {
                 // Set the outfit ID being iterated on.
                 outfitId = outfitIds[i];
+                
+                // Get the product of the outfit being iterated on.
+                JB721Tier memory product = _productOfTokenId({hook: hook, tokenId: outfitId});
 
                 // Set the category of the outfit being iterated on.
-                category = _productOfTokenId({hook: hook, tokenId: outfitId}).category;
+                category = product.category;
+
+                // Set the upc of the outfit being iterated on.
+                upc = product.id;
+
             } else {
                 // Set the category to be more than all other categories to force adding defaults.
                 category = _SPECIAL_BODY_CATEGORY + 1;
                 outfitId = 0;
+                upc = 0;
             }
 
             if (category == _NECKLACE_CATEGORY) {
                 hasNecklace = true;
-                customNecklace = _svgOf({hook: hook, upc: outfitId});
+                customNecklace = _svgOf({hook: hook, upc: upc});
             } else if (category > _NECKLACE_CATEGORY && !hasNecklace) {
                 contents = string.concat(contents, DEFAULT_NECKLACE);
                 hasNecklace = true;
@@ -748,7 +759,7 @@ contract Banny721TokenUriResolver is
 
             // Add the outfit if needed.
             if (outfitId != 0 && category != _NECKLACE_CATEGORY) {
-                contents = string.concat(contents, _svgOf({hook: hook, upc: outfitId}));
+                contents = string.concat(contents, _svgOf({hook: hook, upc: upc}));
             }
         }
     }
