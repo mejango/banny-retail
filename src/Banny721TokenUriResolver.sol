@@ -617,7 +617,9 @@ contract Banny721TokenUriResolver is
     function _mannequinBannySvg() internal view returns (string memory) {
         string memory fillNoneString = string.concat("{fill:none;}");
         return string.concat(
-            "<style>.o{fill:#808080;}.b2",
+            "<style>.o{fill:#808080;}.b1",
+            fillNoneString,
+            ".b2",
             fillNoneString,
             ".b3",
             fillNoneString,
