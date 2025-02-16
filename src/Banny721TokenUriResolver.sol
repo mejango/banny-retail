@@ -291,7 +291,7 @@ contract Banny721TokenUriResolver is
             _categoryNameOf(product.category),
             '"}, {"trait_type": "Total supply", "value": "',
             uint256(product.initialSupply).toString(),
-            '"}, {"trait_type": "Remaining supply", "value": "',
+            '"}, {"trait_type": "Remaining supply available", "value": "',
             uint256(product.remainingSupply).toString(),
             '"}]'
         );
