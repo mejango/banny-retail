@@ -17,7 +17,7 @@ import {Base64} from "lib/base64/base64.sol";
 
 import {IBanny721TokenUriResolver} from "./interfaces/IBanny721TokenUriResolver.sol";
 
-/// @notice Banny asset manager. Stores and shows Naked Bannys in worlds with outfits on.
+/// @notice Banny asset manager. Stores and shows banny bodys in backgrounds with outfits on.
 contract Banny721TokenUriResolver is
     Ownable,
     ERC2771Context,
@@ -34,15 +34,14 @@ contract Banny721TokenUriResolver is
     error Banny721TokenUriResolver_HashAlreadyStored();
     error Banny721TokenUriResolver_HashNotFound();
     error Banny721TokenUriResolver_HeadAlreadyAdded();
-    error Banny721TokenUriResolver_LockedNakedBanny();
     error Banny721TokenUriResolver_OutfitChangesLocked();
     error Banny721TokenUriResolver_SuitAlreadyAdded();
-    error Banny721TokenUriResolver_UnauthorizedNakedBanny();
+    error Banny721TokenUriResolver_UnauthorizedBannyBody();
     error Banny721TokenUriResolver_UnauthorizedOutfit();
-    error Banny721TokenUriResolver_UnauthorizedWorld();
+    error Banny721TokenUriResolver_UnauthorizedBackground();
     error Banny721TokenUriResolver_UnorderedCategories();
     error Banny721TokenUriResolver_UnrecognizedCategory();
-    error Banny721TokenUriResolver_UnrecognizedWorld();
+    error Banny721TokenUriResolver_UnrecognizedBackground();
     error Banny721TokenUriResolver_UnrecognizedProduct();
     error Banny721TokenUriResolver_UnauthorizedTransfer();
 
@@ -54,11 +53,11 @@ contract Banny721TokenUriResolver is
     /// @dev Used in 721 token ID generation.
     uint256 private constant _ONE_BILLION = 1_000_000_000;
 
-    /// @notice The duration that naked Bannys can be locked for.
+    /// @notice The duration that banny bodies can be locked for.
     uint256 private constant _LOCK_DURATION = 7 days;
 
-    uint8 private constant _NAKED_CATEGORY = 0;
-    uint8 private constant _WORLD_CATEGORY = 1;
+    uint8 private constant _BODY_CATEGORY = 0;
+    uint8 private constant _BACKGROUND_CATEGORY = 1;
     uint8 private constant _BACKSIDE_CATEGORY = 2;
     uint8 private constant _NECKLACE_CATEGORY = 3;
     uint8 private constant _HEAD_CATEGORY = 4;
@@ -84,15 +83,15 @@ contract Banny721TokenUriResolver is
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
 
-    /// @notice The amount of time each naked banny is currently locked for.
+    /// @notice The amount of time each banny body is currently locked for.
     /// @custom:param hook The hook address of the collection.
-    /// @custom:param nakedBannyId The ID of the Naked Banny to lock.
+    /// @custom:param bannyBodyId The ID of the banny body to lock.
     mapping(address hook => mapping(uint256 upc => uint256)) public override outfitLockedUntil;
 
     /// @notice The base of the domain hosting the SVG files that can be lazily uploaded to the contract.
     string public override svgBaseUri;
 
-    /// @notice The Naked Banny and outfit SVG hash files.
+    /// @notice The banny body and outfit SVG hash files.
     /// @custom:param upc The universal product code that the SVG hash represent.
     mapping(uint256 upc => bytes32) public override svgHashOf;
 
@@ -100,38 +99,38 @@ contract Banny721TokenUriResolver is
     string public override DEFAULT_MOUTH;
     string public override DEFAULT_NECKLACE;
     string public override DEFAULT_STANDARD_EYES;
-    string public override NAKED_BANNY;
+    string public override BANNY_BODY;
 
     //*********************************************************************//
     // --------------------- internal stored properties ------------------ //
     //*********************************************************************//
 
-    /// @notice The outfits currently attached to each Naked Banny.
-    /// @dev Nakes Banny's will only be shown with outfits currently owned by the owner of the Naked Banny.
+    /// @notice The outfits currently attached to each banny body.
+    /// @dev Nakes Banny's will only be shown with outfits currently owned by the owner of the banny body.
     /// @custom:param hook The hook address of the collection.
-    /// @custom:param nakedBannyId The ID of the Naked Banny of the outfits.
-    mapping(address hook => mapping(uint256 nakedBannyId => uint256[])) internal _attachedOutfitIdsOf;
+    /// @custom:param bannyBodyId The ID of the banny body of the outfits.
+    mapping(address hook => mapping(uint256 bannyBodyId => uint256[])) internal _attachedOutfitIdsOf;
 
-    /// @notice The world currently attached to each Naked Banny.
-    /// @dev Nakes Banny's will only be shown with a world currently owned by the owner of the Naked Banny.
+    /// @notice The background currently attached to each banny body.
+    /// @dev Nakes Banny's will only be shown with a background currently owned by the owner of the banny body.
     /// @custom:param hook The hook address of the collection.
-    /// @custom:param nakedBannyId The ID of the Naked Banny of the world.
-    mapping(address hook => mapping(uint256 nakedBannyId => uint256)) internal _attachedWorldIdOf;
+    /// @custom:param bannyBodyId The ID of the banny body of the background.
+    mapping(address hook => mapping(uint256 bannyBodyId => uint256)) internal _attachedBackgroundIdOf;
 
     /// @notice The name of each product.
     /// @custom:param upc The universal product code that the name belongs to.
     mapping(uint256 upc => string) internal _customProductNameOf;
 
-    /// @notice The Naked Banny and outfit SVG files.
+    /// @notice The banny body and outfit SVG files.
     /// @custom:param upc The universal product code that the SVG contents represent.
     mapping(uint256 upc => string) internal _svgContentOf;
 
-    /// @notice The ID of the naked banny each world is being used by.
+    /// @notice The ID of the banny body each background is being used by.
     /// @custom:param hook The hook address of the collection.
-    /// @custom:param worldId The ID of the world.
-    mapping(address hook => mapping(uint256 worldId => uint256)) internal _userOf;
+    /// @custom:param backgroundId The ID of the background.
+    mapping(address hook => mapping(uint256 backgroundId => uint256)) internal _userOf;
 
-    /// @notice The ID of the naked banny each outfit is being worn by.
+    /// @notice The ID of the banny body each outfit is being worn by.
     /// @custom:param hook The hook address of the collection.
     /// @custom:param outfitId The ID of the outfit.
     mapping(address hook => mapping(uint256 outfitId => uint256)) internal _wearerOf;
@@ -140,7 +139,7 @@ contract Banny721TokenUriResolver is
     // -------------------------- constructor ---------------------------- //
     //*********************************************************************//
 
-    /// @param nakedBanny The SVG of the naked banny.
+    /// @param bannyBody The SVG of the banny body.
     /// @param defaultNecklace The SVG of the default necklace.
     /// @param defaultMouth The SVG of the default mouth.
     /// @param defaultStandardEyes The SVG of the default standard eyes.
@@ -148,7 +147,7 @@ contract Banny721TokenUriResolver is
     /// @param owner The owner allowed to add SVG files that correspond to product IDs.
     /// @param trustedForwarder The trusted forwarder for the ERC2771Context.
     constructor(
-        string memory nakedBanny,
+        string memory bannyBody,
         string memory defaultNecklace,
         string memory defaultMouth,
         string memory defaultStandardEyes,
@@ -159,7 +158,7 @@ contract Banny721TokenUriResolver is
         Ownable(owner)
         ERC2771Context(trustedForwarder)
     {
-        NAKED_BANNY = nakedBanny;
+        BANNY_BODY = bannyBody;
         DEFAULT_NECKLACE = defaultNecklace;
         DEFAULT_MOUTH = defaultMouth;
         DEFAULT_STANDARD_EYES = defaultStandardEyes;
@@ -170,9 +169,9 @@ contract Banny721TokenUriResolver is
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
-    /// @notice Returns the SVG showing a dressed Naked Banny in a world.
-    /// @param tokenId The ID of the token to show. If the ID belongs to a Naked Banny, it will be shown with its
-    /// current outfits in its current world.
+    /// @notice Returns the SVG showing a dressed banny body in a background.
+    /// @param tokenId The ID of the token to show. If the ID belongs to a banny body, it will be shown with its
+    /// current outfits in its current background.
     /// @return tokenUri The URI representing the SVG.
     function tokenUriOf(address hook, uint256 tokenId) external view override returns (string memory) {
         // Get a reference to the product for the given token ID.
@@ -182,38 +181,46 @@ contract Banny721TokenUriResolver is
         if (product.id == 0) return "";
 
         string memory contents;
-
         string memory extraMetadata = "";
+        string memory attributes = '"attributes": [';
 
-        // If this isn't a Naked Banny, return the asset SVG alone (or on a manakin banny).
-        if (product.category != _NAKED_CATEGORY) {
+        // If this isn't a banny body, return the asset SVG alone (or on a manakin banny).
+        if (product.category != _BODY_CATEGORY) {
             // Keep a reference to the SVG contents.
             contents = _svgOf({hook: hook, upc: product.id});
 
             // Layer the outfit SVG over the mannequin Banny
-            // Start with the mannequin SVG if we're not returning a world.
+            // Start with the mannequin SVG if we're not returning a background.
             if (bytes(contents).length != 0) {
-                if (product.category != _WORLD_CATEGORY) {
+                if (product.category != _BACKGROUND_CATEGORY) {
                     contents = string.concat(_mannequinBannySvg(), contents);
                 }
                 contents = _layeredSvg(contents);
             }
 
-            // If the world or outfit is attached to a naked banny, add it to the metadata.
-            if (product.category == _WORLD_CATEGORY) {
-                uint256 nakedBannyId = userOf({hook: hook, worldId: tokenId});
-                extraMetadata = string.concat('"usedByNakedBannyId": ', nakedBannyId.toString(), ",");
+            // If the background or outfit is attached to a banny body, add it to extraMetadata.
+            if (product.category == _BACKGROUND_CATEGORY) {
+                uint256 bannyBodyId = userOf({hook: hook, backgroundId: tokenId});
+                extraMetadata = string.concat('"usedByBannyBodyId": ', bannyBodyId.toString(), ",");
+                attributes =
+                    string.concat(attributes, '{"trait_type": "Used by Banny", "value": ', bannyBodyId.toString(), "},");
             } else {
-                uint256 nakedBannyId = wearerOf({hook: hook, outfitId: tokenId});
-                extraMetadata = string.concat('"wornByNakedBannyId": ', nakedBannyId.toString(), ",");
+                uint256 bannyBodyId = wearerOf({hook: hook, outfitId: tokenId});
+                extraMetadata = string.concat('"wornByBannyBodyId": ', bannyBodyId.toString(), ",");
+                attributes =
+                    string.concat(attributes, '{"trait_type": "Worn by Banny", "value": ', bannyBodyId.toString(), "},");
             }
         } else {
             // Compose the contents.
-            contents =
-                svgOf({hook: hook, tokenId: tokenId, shouldDressNakedBanny: true, shouldIncludeWorldOnNakedBanny: true});
+            contents = svgOf({
+                hook: hook,
+                tokenId: tokenId,
+                shouldDressBannyBody: true,
+                shouldIncludeBackgroundOnBannyBody: true
+            });
 
-            // Get a reference to each asset ID currently attached to the Naked Banny.
-            (uint256 worldId, uint256[] memory outfitIds) = assetIdsOf({hook: hook, nakedBannyId: tokenId});
+            // Get a reference to each asset ID currently attached to the banny body.
+            (uint256 backgroundId, uint256[] memory outfitIds) = assetIdsOf({hook: hook, bannyBodyId: tokenId});
 
             extraMetadata = '"outfitIds": [';
 
@@ -228,12 +235,33 @@ contract Banny721TokenUriResolver is
 
             extraMetadata = string.concat(extraMetadata, "],");
 
-            if (worldId != 0) extraMetadata = string.concat(extraMetadata, '"worldId": ', worldId.toString(), ",");
+            attributes = string.concat(attributes, '{"trait_type": "Outfits worn", "value": [');
+
+            for (uint256 i; i < outfitIds.length; i++) {
+                attributes = string.concat(attributes, '"', _productNameOf(outfitIds[i]), '"');
+
+                // Add a comma if it's not the last outfit.
+                if (i < outfitIds.length - 1) {
+                    attributes = string.concat(attributes, ",");
+                }
+            }
+
+            attributes = string.concat(attributes, "]},");
+
+            if (backgroundId != 0) {
+                extraMetadata = string.concat(extraMetadata, '"backgroundId": ', backgroundId.toString(), ",");
+                attributes = string.concat(
+                    attributes, '{"trait_type": "Background used", "value": "', _productNameOf(backgroundId), '"},'
+                );
+            }
 
             // If the token has an owner, check if the owner has locked the token.
             uint256 lockedUntil = outfitLockedUntil[hook][tokenId];
             if (lockedUntil > block.timestamp) {
-                extraMetadata = string.concat(extraMetadata, '"decorationsLockedUntil": ', lockedUntil.toString(), ",");
+                extraMetadata = string.concat(extraMetadata, '"changesLockedUntil": ', lockedUntil.toString(), ",");
+                attributes = string.concat(
+                    attributes, '{"trait_type": "Changes locked until", "value": ', lockedUntil.toString(), "},"
+                );
             }
         }
 
@@ -250,6 +278,19 @@ contract Banny721TokenUriResolver is
         // Get a reference to the pricing context.
         // slither-disable-next-line unused-return
         (uint256 currency, uint256 decimals,) = IJB721TiersHook(hook).pricingContext();
+
+        attributes = string.concat(
+            attributes,
+            '{"trait_type": "Product name", "value": "',
+            _productNameOf(product.id),
+            '"}, {"trait_type": "Category name", "value": "',
+            _categoryNameOf(product.category),
+            '"}, {"trait_type": "Total supply", "value": "',
+            uint256(product.initialSupply).toString(),
+            '"}, {"trait_type": "Remaining supply", "value": "',
+            uint256(product.remainingSupply).toString(),
+            '"}]'
+        );
 
         return string.concat(
             "data:application/json;base64,",
@@ -277,9 +318,12 @@ contract Banny721TokenUriResolver is
                     decimals.toString(),
                     ', "currency": ',
                     currency.toString(),
+                    ', "discount": ',
+                    uint256(product.discountPercent).toString(),
                     ", ",
-                    extraMetadata,
-                    '"description":"A piece of the Bannyverse","image":"data:image/svg+xml;base64,',
+                    extraMetadata, // Keeps extraMetadata as it was
+                    attributes, // Includes all attributes
+                    ', "description":"A piece of Banny Retail.","external_url":"https://retail.banny.eth.sucks","image":"data:image/svg+xml;base64,',
                     Base64.encode(abi.encodePacked(contents)),
                     '"}'
                 )
@@ -291,22 +335,22 @@ contract Banny721TokenUriResolver is
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
 
-    /// @notice The assets currently attached to each Naked Banny.
+    /// @notice The assets currently attached to each banny body.
     /// @custom:param hook The hook address of the collection.
-    /// @param nakedBannyId The ID of the naked banny shows with the associated assets.
-    /// @return worldId The world attached to the Naked Banny.
-    /// @return outfitIds The outfits attached to the Naked Banny.
+    /// @param bannyBodyId The ID of the banny body shown with the associated assets.
+    /// @return backgroundId The background attached to the banny body.
+    /// @return outfitIds The outfits attached to the banny body.
     function assetIdsOf(
         address hook,
-        uint256 nakedBannyId
+        uint256 bannyBodyId
     )
         public
         view
         override
-        returns (uint256 worldId, uint256[] memory outfitIds)
+        returns (uint256 backgroundId, uint256[] memory outfitIds)
     {
-        // Keep a reference to the outfit IDs currently stored as attached to the Naked Banny.
-        uint256[] memory storedOutfitIds = _attachedOutfitIdsOf[hook][nakedBannyId];
+        // Keep a reference to the outfit IDs currently stored as attached to the banny body.
+        uint256[] memory storedOutfitIds = _attachedOutfitIdsOf[hook][bannyBodyId];
 
         // Initiate the outfit IDs array with the same number of entries.
         outfitIds = new uint256[](storedOutfitIds.length);
@@ -317,22 +361,22 @@ contract Banny721TokenUriResolver is
         // Keep a reference to the stored outfit ID being iterated on.
         uint256 storedOutfitId;
 
-        // Return the outfit's that are still being worn by the naked banny.
+        // Return the outfit's that are still being worn by the banny body.
         for (uint256 i; i < storedOutfitIds.length; i++) {
             // Set the stored outfit ID being iterated on.
             storedOutfitId = storedOutfitIds[i];
 
             // If the stored outfit is still being worn, return it.
-            if (wearerOf({hook: hook, outfitId: storedOutfitId}) == nakedBannyId) {
+            if (wearerOf({hook: hook, outfitId: storedOutfitId}) == bannyBodyId) {
                 outfitIds[numberOfIncludedOutfits++] = storedOutfitId;
             }
         }
 
-        // Keep a reference to the world currently stored as attached to the naked Banny.
-        uint256 storedWorldOf = _attachedWorldIdOf[hook][nakedBannyId];
+        // Keep a reference to the background currently stored as attached to the banny body.
+        uint256 storedBackgroundOf = _attachedBackgroundIdOf[hook][bannyBodyId];
 
-        // If the world is still being used, return it.
-        if (userOf({hook: hook, worldId: storedWorldOf}) == nakedBannyId) worldId = storedWorldOf;
+        // If the background is still being used, return it.
+        if (userOf({hook: hook, backgroundId: storedBackgroundOf}) == bannyBodyId) backgroundId = storedBackgroundOf;
     }
 
     /// @notice Returns the name of the token.
@@ -360,19 +404,20 @@ contract Banny721TokenUriResolver is
         );
     }
 
-    /// @notice Returns the SVG showing either a naked banny with/without outfits and a world, or the stand alone outfit
-    /// or world.
+    /// @notice Returns the SVG showing either a banny body with/without outfits and a background, or the stand alone
+    /// outfit
+    /// or background.
     /// @param hook The hook storing the assets.
-    /// @param tokenId The ID of the token to show. If the ID belongs to a Naked Banny, it will be shown with its
-    /// current outfits in its current world if specified.
-    /// @param shouldDressNakedBanny Whether the naked banny should be dressed.
-    /// @param shouldIncludeWorldOnNakedBanny Whether the world should be included on the naked banny.
+    /// @param tokenId The ID of the token to show. If the ID belongs to a banny body, it will be shown with its
+    /// current outfits in its current background if specified.
+    /// @param shouldDressBannyBody Whether the banny body should be dressed.
+    /// @param shouldIncludeBackgroundOnBannyBody Whether the background should be included on the banny body.
     /// @return svg The SVG.
     function svgOf(
         address hook,
         uint256 tokenId,
-        bool shouldDressNakedBanny,
-        bool shouldIncludeWorldOnNakedBanny
+        bool shouldDressBannyBody,
+        bool shouldIncludeBackgroundOnBannyBody
     )
         public
         view
@@ -388,8 +433,8 @@ contract Banny721TokenUriResolver is
         // Compose the contents.
         string memory contents;
 
-        // If this isn't a Naked Banny and there's an SVG available, return the asset SVG alone.
-        if (product.category != _NAKED_CATEGORY) {
+        // If this isn't a banny body and there's an SVG available, return the asset SVG alone.
+        if (product.category != _BODY_CATEGORY) {
             // Keep a reference to the SVG contents.
             contents = _svgOf({hook: hook, upc: product.id});
 
@@ -397,22 +442,22 @@ contract Banny721TokenUriResolver is
             return (bytes(contents).length == 0) ? "" : _layeredSvg(contents);
         }
 
-        // Get a reference to each asset ID currently attached to the Naked Banny.
-        (uint256 worldId, uint256[] memory outfitIds) = assetIdsOf({hook: hook, nakedBannyId: tokenId});
+        // Get a reference to each asset ID currently attached to the banny body.
+        (uint256 backgroundId, uint256[] memory outfitIds) = assetIdsOf({hook: hook, bannyBodyId: tokenId});
 
-        // Add the world if needed.
-        if (worldId != 0 && shouldIncludeWorldOnNakedBanny) {
-            contents = string.concat(contents, _svgOf({hook: hook, upc: worldId}));
+        // Add the background if needed.
+        if (backgroundId != 0 && shouldIncludeBackgroundOnBannyBody) {
+            contents = string.concat(contents, _svgOf({hook: hook, upc: backgroundId}));
         }
 
-        // Start with the Naked Banny.
-        contents = string.concat(contents, _nakedBannySvgOf({upc: product.id}));
+        // Start with the banny body.
+        contents = string.concat(contents, _bannyBodySvgOf({upc: product.id}));
 
         // Add eyes.
         if (product.id == ALIEN_UPC) contents = string.concat(contents, DEFAULT_ALIEN_EYES);
         else contents = string.concat(contents, DEFAULT_STANDARD_EYES);
 
-        if (shouldDressNakedBanny) {
+        if (shouldDressBannyBody) {
             // Get the outfit contents.
             string memory outfitContents = _outfitContentsFor({hook: hook, outfitIds: outfitIds});
 
@@ -426,38 +471,38 @@ contract Banny721TokenUriResolver is
         return _layeredSvg(contents);
     }
 
-    /// @notice Checks to see which naked banny is currently using a particular world.
+    /// @notice Checks to see which banny body is currently using a particular background.
     /// @param hook The hook address of the collection.
-    /// @param worldId The ID of the world being used.
-    /// @return The ID of the naked banny using the world.
-    function userOf(address hook, uint256 worldId) public view override returns (uint256) {
-        // Get a reference to the naked banny using the world.
-        uint256 nakedBannyId = _userOf[hook][worldId];
+    /// @param backgroundId The ID of the background being used.
+    /// @return The ID of the banny body using the background.
+    function userOf(address hook, uint256 backgroundId) public view override returns (uint256) {
+        // Get a reference to the banny body using the background.
+        uint256 bannyBodyId = _userOf[hook][backgroundId];
 
-        // If no naked banny is wearing the outfit, or if its no longer the world attached, return 0.
-        if (nakedBannyId == 0 || _attachedWorldIdOf[hook][nakedBannyId] != worldId) return 0;
+        // If no banny body is wearing the outfit, or if its no longer the background attached, return 0.
+        if (bannyBodyId == 0 || _attachedBackgroundIdOf[hook][bannyBodyId] != backgroundId) return 0;
 
-        // Return the naked banny ID.
-        return nakedBannyId;
+        // Return the banny body ID.
+        return bannyBodyId;
     }
 
-    /// @notice Checks to see which naked banny is currently wearing a particular outfit.
+    /// @notice Checks to see which banny body is currently wearing a particular outfit.
     /// @param hook The hook address of the collection.
     /// @param outfitId The ID of the outfit being worn.
-    /// @return The ID of the naked banny wearing the outfit.
+    /// @return The ID of the banny body wearing the outfit.
     function wearerOf(address hook, uint256 outfitId) public view override returns (uint256) {
-        // Get a reference to the naked banny wearing the outfit.
-        uint256 nakedBannyId = _wearerOf[hook][outfitId];
+        // Get a reference to the banny body wearing the outfit.
+        uint256 bannyBodyId = _wearerOf[hook][outfitId];
 
-        // If no naked banny is wearing the outfit, return 0.
-        if (nakedBannyId == 0) return 0;
+        // If no banny body is wearing the outfit, return 0.
+        if (bannyBodyId == 0) return 0;
 
-        // Keep a reference to the outfit IDs currently attached to a naked banny.
-        uint256[] memory attachedOutfitIds = _attachedOutfitIdsOf[hook][nakedBannyId];
+        // Keep a reference to the outfit IDs currently attached to a banny body.
+        uint256[] memory attachedOutfitIds = _attachedOutfitIdsOf[hook][bannyBodyId];
 
         for (uint256 i; i < attachedOutfitIds.length; i++) {
-            // If the outfit is still attached, return the naked banny ID.
-            if (attachedOutfitIds[i] == outfitId) return nakedBannyId;
+            // If the outfit is still attached, return the banny body ID.
+            if (attachedOutfitIds[i] == outfitId) return bannyBodyId;
         }
 
         // If the outfit is no longer attached, return 0.
@@ -472,10 +517,10 @@ contract Banny721TokenUriResolver is
     /// @param category The category of the token being named.
     /// @return name The token's category name.
     function _categoryNameOf(uint256 category) internal pure returns (string memory) {
-        if (category == _NAKED_CATEGORY) {
-            return "Naked Banny";
-        } else if (category == _WORLD_CATEGORY) {
-            return "World";
+        if (category == _BODY_CATEGORY) {
+            return "Banny";
+        } else if (category == _BACKGROUND_CATEGORY) {
+            return "Background";
         } else if (category == _BACKSIDE_CATEGORY) {
             return "Backside";
         } else if (category == _LEGS_CATEGORY) {
@@ -519,7 +564,7 @@ contract Banny721TokenUriResolver is
     /// @param hook The 721 contract of the token having ownership checked.
     /// @param upc The product's UPC to check ownership of.
     function _checkIfSenderIsOwner(address hook, uint256 upc) internal view {
-        if (IERC721(hook).ownerOf(upc) != _msgSender()) revert Banny721TokenUriResolver_UnauthorizedNakedBanny();
+        if (IERC721(hook).ownerOf(upc) != _msgSender()) revert Banny721TokenUriResolver_UnauthorizedBannyBody();
     }
 
     /// @notice The fills for a product.
@@ -587,7 +632,7 @@ contract Banny721TokenUriResolver is
         }
 
         // Append a separator.
-        name = string.concat(name, " : ");
+        name = string.concat(name, ": ");
 
         // Get a reference to the categorie's name.
         string memory categoryName = _categoryNameOf(product.category);
@@ -632,7 +677,7 @@ contract Banny721TokenUriResolver is
             ".a3",
             fillNoneString,
             "</style>",
-            NAKED_BANNY
+            BANNY_BODY
         );
     }
 
@@ -648,10 +693,10 @@ contract Banny721TokenUriResolver is
         return ERC2771Context._msgSender();
     }
 
-    /// @notice The SVG contents for a naked banny.
+    /// @notice The SVG contents for a banny body.
     /// @param upc The ID of the token whose product's SVG is being returned.
-    /// @return contents The SVG contents of the naked banny.
-    function _nakedBannySvgOf(uint256 upc) internal view returns (string memory) {
+    /// @return contents The SVG contents of the banny body.
+    function _bannyBodySvgOf(uint256 upc) internal view returns (string memory) {
         (
             string memory b1,
             string memory b2,
@@ -677,7 +722,7 @@ contract Banny721TokenUriResolver is
             ";}.a3{fill:#",
             a3,
             ";}</style>",
-            NAKED_BANNY
+            BANNY_BODY
         );
     }
 
@@ -693,7 +738,7 @@ contract Banny721TokenUriResolver is
         view
         returns (string memory contents)
     {
-        // Get a reference to the number of outfits are on the Naked Banny.
+        // Get a reference to the number of outfits are on the banny body.
         uint256 numberOfOutfits = outfitIds.length;
 
         // Keep a reference to if certain accessories have been added.
@@ -704,7 +749,7 @@ contract Banny721TokenUriResolver is
         // default.
         string memory customNecklace;
 
-        // For each outfit, add the SVG layer if it's owned by the same owner as the Naked Banny being dressed.
+        // For each outfit, add the SVG layer if it's owned by the same owner as the banny body being dressed.
         // Loop once more to make sure all default outfits are added.
         for (uint256 i; i < numberOfOutfits + 1; i++) {
             // Keep a reference to the outfit ID being iterated on.
@@ -720,7 +765,7 @@ contract Banny721TokenUriResolver is
             if (i < numberOfOutfits) {
                 // Set the outfit ID being iterated on.
                 outfitId = outfitIds[i];
-                
+
                 // Get the product of the outfit being iterated on.
                 JB721Tier memory product = _productOfTokenId({hook: hook, tokenId: outfitId});
 
@@ -729,7 +774,6 @@ contract Banny721TokenUriResolver is
 
                 // Set the upc of the outfit being iterated on.
                 upc = product.id;
-
             } else {
                 // Set the category to be more than all other categories to force adding defaults.
                 category = _SPECIAL_BODY_CATEGORY + 1;
@@ -800,7 +844,7 @@ contract Banny721TokenUriResolver is
         return IJB721TiersHook(hook).STORE();
     }
 
-    /// @notice The Naked Banny and outfit SVG files.
+    /// @notice The banny body and outfit SVG files.
     /// @param hook The 721 contract that the product belongs to.
     /// @param upc The universal product code of the product that the SVG contents represent.
     function _svgOf(address hook, uint256 upc) internal view returns (string memory) {
@@ -820,54 +864,54 @@ contract Banny721TokenUriResolver is
     // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
 
-    /// @notice Dress your Naked Banny with outfits.
-    /// @dev The caller must own the naked banny being dressed and all outfits being worn.
+    /// @notice Dress your banny body with outfits.
+    /// @dev The caller must own the banny body being dressed and all outfits being worn.
     /// @param hook The hook storing the assets.
-    /// @param nakedBannyId The ID of the Naked Banny being dressed.
-    /// @param worldId The ID of the world that'll be associated with the specified banny.
+    /// @param bannyBodyId The ID of the banny body being dressed.
+    /// @param backgroundId The ID of the background that'll be associated with the specified banny.
     /// @param outfitIds The IDs of the outfits that'll be associated with the specified banny. Only one outfit per
     /// outfit category allowed at a time and they must be passed in order.
     function decorateBannyWith(
         address hook,
-        uint256 nakedBannyId,
-        uint256 worldId,
+        uint256 bannyBodyId,
+        uint256 backgroundId,
         uint256[] calldata outfitIds
     )
         external
         override
         nonReentrant
     {
-        _checkIfSenderIsOwner({hook: hook, upc: nakedBannyId});
+        _checkIfSenderIsOwner({hook: hook, upc: bannyBodyId});
 
         // Can't decorate a banny that's locked.
-        if (outfitLockedUntil[hook][nakedBannyId] > block.timestamp) {
+        if (outfitLockedUntil[hook][bannyBodyId] > block.timestamp) {
             revert Banny721TokenUriResolver_OutfitChangesLocked();
         }
 
         emit DecorateBanny({
             hook: hook,
-            nakedBannyId: nakedBannyId,
-            worldId: worldId,
+            bannyBodyId: bannyBodyId,
+            backgroundId: backgroundId,
             outfitIds: outfitIds,
             caller: _msgSender()
         });
 
-        // Add the world.
-        _decorateBannyWithWorld({hook: hook, nakedBannyId: nakedBannyId, worldId: worldId});
+        // Add the background.
+        _decorateBannyWithBackground({hook: hook, bannyBodyId: bannyBodyId, backgroundId: backgroundId});
 
         // Add the outfits.
-        _decorateBannyWithOutfits({hook: hook, nakedBannyId: nakedBannyId, outfitIds: outfitIds});
+        _decorateBannyWithOutfits({hook: hook, bannyBodyId: bannyBodyId, outfitIds: outfitIds});
     }
 
-    /// @notice Locks a naked banny ID so that it can't change its outfit for a period of time.
+    /// @notice Locks a banny body ID so that it can't change its outfit for a period of time.
     /// @param hook The hook address of the collection.
-    /// @param nakedBannyId The ID of the Naked Banny to lock.
-    function lockOutfitChangesFor(address hook, uint256 nakedBannyId) public override {
-        // Make sure only the naked banny's owner can lock it.
-        _checkIfSenderIsOwner({hook: hook, upc: nakedBannyId});
+    /// @param bannyBodyId The ID of the banny body to lock.
+    function lockOutfitChangesFor(address hook, uint256 bannyBodyId) public override {
+        // Make sure only the banny body's owner can lock it.
+        _checkIfSenderIsOwner({hook: hook, upc: bannyBodyId});
 
         // Keep a reference to the current lock.
-        uint256 currentLockedUntil = outfitLockedUntil[hook][nakedBannyId];
+        uint256 currentLockedUntil = outfitLockedUntil[hook][bannyBodyId];
 
         // Calculate the new time at which the lock will expire.
         uint256 newLockUntil = block.timestamp + _LOCK_DURATION;
@@ -876,7 +920,7 @@ contract Banny721TokenUriResolver is
         if (currentLockedUntil > newLockUntil) revert Banny721TokenUriResolver_CantAccelerateTheLock();
 
         // Set the lock.
-        outfitLockedUntil[hook][nakedBannyId] = newLockUntil;
+        outfitLockedUntil[hook][bannyBodyId] = newLockUntil;
     }
 
     /// @dev Make sure tokens can be receieved if the transaction was initiated by this contract.
@@ -978,13 +1022,13 @@ contract Banny721TokenUriResolver is
     // ---------------------- internal transactions ---------------------- //
     //*********************************************************************//
 
-    /// @notice Add outfits to a naked banny.
-    /// @dev The caller must own the naked banny being dressed and all outfits being worn.
+    /// @notice Add outfits to a banny body.
+    /// @dev The caller must own the banny body being dressed and all outfits being worn.
     /// @param hook The hook storing the assets.
-    /// @param nakedBannyId The ID of the Naked Banny being dressed.
+    /// @param bannyBodyId The ID of the banny body being dressed.
     /// @param outfitIds The IDs of the outfits that'll be associated with the specified banny. Only one outfit per
     /// outfit category allowed at a time and they must be passed in order.
-    function _decorateBannyWithOutfits(address hook, uint256 nakedBannyId, uint256[] memory outfitIds) internal {
+    function _decorateBannyWithOutfits(address hook, uint256 bannyBodyId, uint256[] memory outfitIds) internal {
         // Keep track of certain outfits being used along the way to prevent conflicting outfits.
         bool hasHead;
         bool hasSuit;
@@ -992,8 +1036,8 @@ contract Banny721TokenUriResolver is
         // Keep a reference to the category of the last outfit iterated on.
         uint256 lastAssetCategory;
 
-        // Keep a reference to the currently attached outfits on the naked banny.
-        uint256[] memory previousOutfitIds = _attachedOutfitIdsOf[hook][nakedBannyId];
+        // Keep a reference to the currently attached outfits on the banny body.
+        uint256[] memory previousOutfitIds = _attachedOutfitIdsOf[hook][bannyBodyId];
 
         // Keep a index counter that'll help with tracking progress.
         uint256 previousOutfitIndex;
@@ -1019,7 +1063,7 @@ contract Banny721TokenUriResolver is
             // Keep a reference to the outfit's owner.
             address owner = IERC721(hook).ownerOf(outfitId);
 
-            // Check if the call is being made either by the outfit's owner or the owner of the naked banny currently
+            // Check if the call is being made either by the outfit's owner or the owner of the banny body currently
             // wearing it.
             if (_msgSender() != owner && _msgSender() != IERC721(hook).ownerOf(wearerOf(hook, outfitId))) {
                 revert Banny721TokenUriResolver_UnauthorizedOutfit();
@@ -1059,10 +1103,9 @@ contract Banny721TokenUriResolver is
             // Remove all previous assets up to and including the current category being iterated on.
             while (previousOutfitProductCategory <= outfitProductCategory && previousOutfitProductCategory != 0) {
                 // Transfer the previous outfit to the owner of the banny if its not being worn.
-                // `_attachedOutfitIdsOf` hasnt been called yet, so the wearer should still be the naked banny being
+                // `_attachedOutfitIdsOf` hasnt been called yet, so the wearer should still be the banny body being
                 // decorated.
-                if (previousOutfitId != outfitId && wearerOf({hook: hook, outfitId: previousOutfitId}) == nakedBannyId)
-                {
+                if (previousOutfitId != outfitId && wearerOf({hook: hook, outfitId: previousOutfitId}) == bannyBodyId) {
                     // slither-disable-next-line reentrancy-no-eth
                     _transferFrom({hook: hook, from: address(this), to: _msgSender(), assetId: previousOutfitId});
                 }
@@ -1079,9 +1122,9 @@ contract Banny721TokenUriResolver is
             }
 
             // If the outfit is not already being worn by the banny, transfer it to this contract.
-            if (wearerOf({hook: hook, outfitId: outfitId}) != nakedBannyId) {
-                // Store the banny that's in the world.
-                _wearerOf[hook][outfitId] = nakedBannyId;
+            if (wearerOf({hook: hook, outfitId: outfitId}) != bannyBodyId) {
+                // Store the banny that's in the background.
+                _wearerOf[hook][outfitId] = bannyBodyId;
 
                 // Transfer the outfit to this contract.
                 // slither-disable-next-line reentrancy-no-eth
@@ -1096,9 +1139,9 @@ contract Banny721TokenUriResolver is
 
         // Remove and transfer out any remaining assets no longer being worn.
         while (previousOutfitId != 0) {
-            // `_attachedOutfitIdsOf` hasnt been called yet, so the wearer should still be the naked banny being
+            // `_attachedOutfitIdsOf` hasnt been called yet, so the wearer should still be the banny body being
             // decorated.
-            if (wearerOf({hook: hook, outfitId: previousOutfitId}) == nakedBannyId) {
+            if (wearerOf({hook: hook, outfitId: previousOutfitId}) == bannyBodyId) {
                 // slither-disable-next-line reentrancy-no-eth
                 _transferFrom({hook: hook, from: address(this), to: _msgSender(), assetId: previousOutfitId});
             }
@@ -1112,59 +1155,59 @@ contract Banny721TokenUriResolver is
         }
 
         // Store the outfits.
-        _attachedOutfitIdsOf[hook][nakedBannyId] = outfitIds;
+        _attachedOutfitIdsOf[hook][bannyBodyId] = outfitIds;
     }
 
-    /// @notice Add a world to a Naked Banny.
+    /// @notice Add a background to a banny body.
     /// @param hook The hook storing the assets.
-    /// @param nakedBannyId The ID of the Naked Banny being dressed.
-    /// @param worldId The ID of the world that'll be associated with the specified banny.
-    function _decorateBannyWithWorld(address hook, uint256 nakedBannyId, uint256 worldId) internal {
-        // Keep a reference to the previous world attached.
-        uint256 previousWorldId = _attachedWorldIdOf[hook][nakedBannyId];
+    /// @param bannyBodyId The ID of the banny body being dressed.
+    /// @param backgroundId The ID of the background that'll be associated with the specified banny.
+    function _decorateBannyWithBackground(address hook, uint256 bannyBodyId, uint256 backgroundId) internal {
+        // Keep a reference to the previous background attached.
+        uint256 previousBackgroundId = _attachedBackgroundIdOf[hook][bannyBodyId];
 
-        // Keep a reference to the user of the previous world.
-        uint256 userOfPreviousWorld = userOf({hook: hook, worldId: previousWorldId});
+        // Keep a reference to the user of the previous background.
+        uint256 userOfPreviousBackground = userOf({hook: hook, backgroundId: previousBackgroundId});
 
-        // If the world is changing, add the lateset world and transfer the old one back to the owner.
-        if (worldId != previousWorldId || userOfPreviousWorld != nakedBannyId) {
-            // If there's a previous world worn by this banny, transfer it back to the owner.
-            if (userOfPreviousWorld == nakedBannyId) {
-                // Transfer the previous world to the owner of the banny.
-                _transferFrom({hook: hook, from: address(this), to: _msgSender(), assetId: previousWorldId});
+        // If the background is changing, add the lateset background and transfer the old one back to the owner.
+        if (backgroundId != previousBackgroundId || userOfPreviousBackground != bannyBodyId) {
+            // If there's a previous background worn by this banny, transfer it back to the owner.
+            if (userOfPreviousBackground == bannyBodyId) {
+                // Transfer the previous background to the owner of the banny.
+                _transferFrom({hook: hook, from: address(this), to: _msgSender(), assetId: previousBackgroundId});
             }
 
-            // Add the world if needed.
-            if (worldId != 0) {
-                // Keep a reference to the world's owner.
-                address owner = IERC721(hook).ownerOf(worldId);
+            // Add the background if needed.
+            if (backgroundId != 0) {
+                // Keep a reference to the background's owner.
+                address owner = IERC721(hook).ownerOf(backgroundId);
 
-                // Check if the call is being made by the world's owner, or the owner of a naked banny using it.
-                if (_msgSender() != owner && _msgSender() != IERC721(hook).ownerOf(userOf(hook, worldId))) {
-                    revert Banny721TokenUriResolver_UnauthorizedWorld();
+                // Check if the call is being made by the background's owner, or the owner of a banny body using it.
+                if (_msgSender() != owner && _msgSender() != IERC721(hook).ownerOf(userOf(hook, backgroundId))) {
+                    revert Banny721TokenUriResolver_UnauthorizedBackground();
                 }
 
-                // Get the world's product info.
-                JB721Tier memory worldProduct = _productOfTokenId({hook: hook, tokenId: worldId});
+                // Get the background's product info.
+                JB721Tier memory backgroundProduct = _productOfTokenId({hook: hook, tokenId: backgroundId});
 
-                // World must exist
-                if (worldProduct.id == 0) revert Banny721TokenUriResolver_UnrecognizedWorld();
+                // Background must exist
+                if (backgroundProduct.id == 0) revert Banny721TokenUriResolver_UnrecognizedBackground();
 
-                // Store the world for the banny.
+                // Store the background for the banny.
                 // slither-disable-next-line reentrancy-no-eth
-                _attachedWorldIdOf[hook][nakedBannyId] = worldId;
+                _attachedBackgroundIdOf[hook][bannyBodyId] = backgroundId;
 
-                // Store the banny that's in the world.
+                // Store the banny that's in the background.
                 // slither-disable-next-line reentrancy-no-eth
-                _userOf[hook][worldId] = nakedBannyId;
+                _userOf[hook][backgroundId] = bannyBodyId;
 
-                // Transfer the world to this contract if it's not already owned by this contract.
+                // Transfer the background to this contract if it's not already owned by this contract.
                 if (owner != address(this)) {
-                    _transferFrom({hook: hook, from: _msgSender(), to: address(this), assetId: worldId});
+                    _transferFrom({hook: hook, from: _msgSender(), to: address(this), assetId: backgroundId});
                 }
             } else {
                 // slither-disable-next-line reentrancy-no-eth
-                _attachedWorldIdOf[hook][nakedBannyId] = 0;
+                _attachedBackgroundIdOf[hook][bannyBodyId] = 0;
             }
         }
     }

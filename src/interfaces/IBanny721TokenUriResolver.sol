@@ -3,7 +3,11 @@ pragma solidity ^0.8.0;
 
 interface IBanny721TokenUriResolver {
     event DecorateBanny(
-        address indexed hook, uint256 indexed nakedBannyId, uint256 indexed worldId, uint256[] outfitIds, address caller
+        address indexed hook,
+        uint256 indexed bannyBodyId,
+        uint256 indexed backgroundId,
+        uint256[] outfitIds,
+        address caller
     );
     event SetProductName(uint256 indexed upc, string name, address caller);
     event SetSvgBaseUri(string baseUri, address caller);
@@ -17,22 +21,22 @@ interface IBanny721TokenUriResolver {
     function DEFAULT_MOUTH() external view returns (string memory);
     function DEFAULT_NECKLACE() external view returns (string memory);
     function DEFAULT_STANDARD_EYES() external view returns (string memory);
-    function NAKED_BANNY() external view returns (string memory);
+    function BANNY_BODY() external view returns (string memory);
 
     function assetIdsOf(
         address hook,
-        uint256 nakedBannyId
+        uint256 bannyBodyId
     )
         external
         view
-        returns (uint256 worldId, uint256[] memory outfitIds);
-    function userOf(address hook, uint256 worldId) external view returns (uint256);
+        returns (uint256 backgroundId, uint256[] memory outfitIds);
+    function userOf(address hook, uint256 backgroundId) external view returns (uint256);
     function wearerOf(address hook, uint256 outfitId) external view returns (uint256);
     function svgOf(
         address hook,
         uint256 tokenId,
-        bool shouldDressNakedBanny,
-        bool shouldIncludeWorldOnNakedBanny
+        bool shouldDressBannyBody,
+        bool shouldIncludeBackgroundOnBannyBody
     )
         external
         view
@@ -47,13 +51,13 @@ interface IBanny721TokenUriResolver {
 
     function decorateBannyWith(
         address hook,
-        uint256 nakedBannyId,
-        uint256 worldId,
+        uint256 bannyBodyId,
+        uint256 backgroundId,
         uint256[] calldata outfitIds
     )
         external;
 
-    function lockOutfitChangesFor(address hook, uint256 nakedBannyId) external;
+    function lockOutfitChangesFor(address hook, uint256 bannyBodyId) external;
 
     function setSvgContentsOf(uint256[] memory upcs, string[] calldata svgContents) external;
     function setSvgHashsOf(uint256[] memory upcs, bytes32[] memory svgHashs) external;
