@@ -80,7 +80,7 @@ contract DeployScript is Script, Sphinx {
     uint24 NAKED_BANNY_CATEGORY = 0;
     address OPERATOR;
     address TRUSTED_FORWARDER;
-    uint256 TIME_UNTIL_START = 7 days;
+    uint256 TIME_UNTIL_START = 1 hours;
 
     function configureSphinx() public override {
         // TODO: Update to contain revnet devs.
