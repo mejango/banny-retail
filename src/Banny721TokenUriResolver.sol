@@ -253,6 +253,10 @@ contract Banny721TokenUriResolver is
                 attributes = string.concat(
                     attributes, '{"trait_type": "Background used", "value": "', _productNameOf(backgroundId), '"},'
                 );
+            } else {
+                attributes = string.concat(
+                    attributes, '{"trait_type": "Background used", "value": ""},'
+                );
             }
 
             // If the token has an owner, check if the owner has locked the token.
@@ -518,7 +522,7 @@ contract Banny721TokenUriResolver is
     /// @return name The token's category name.
     function _categoryNameOf(uint256 category) internal pure returns (string memory) {
         if (category == _BODY_CATEGORY) {
-            return "Banny";
+            return "Banny body";
         } else if (category == _BACKGROUND_CATEGORY) {
             return "Background";
         } else if (category == _BACKSIDE_CATEGORY) {
