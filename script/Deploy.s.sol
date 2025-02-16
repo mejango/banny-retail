@@ -80,7 +80,7 @@ contract DeployScript is Script, Sphinx {
     uint24 NAKED_BANNY_CATEGORY = 0;
     address OPERATOR;
     address TRUSTED_FORWARDER;
-    uint256 TIME_UNTIL_START = 1 days;
+    uint256 TIME_UNTIL_START = 7 days;
 
     function configureSphinx() public override {
         // TODO: Update to contain revnet devs.
@@ -174,7 +174,7 @@ contract DeployScript is Script, Sphinx {
             REVAutoIssuance[] memory autoIssuances = new REVAutoIssuance[](1);
             autoIssuances[0] = REVAutoIssuance({
                 chainId: PREMINT_CHAIN_ID,
-                count: uint104(600_000 * DECIMAL_MULTIPLIER),
+                count: uint104(500_000 * DECIMAL_MULTIPLIER),
                 beneficiary: OPERATOR
             });
 
@@ -195,7 +195,7 @@ contract DeployScript is Script, Sphinx {
             REVAutoIssuance[] memory autoIssuances = new REVAutoIssuance[](1);
             autoIssuances[0] = REVAutoIssuance({
                 chainId: PREMINT_CHAIN_ID,
-                count: uint104(1_100_000 * DECIMAL_MULTIPLIER),
+                count: uint104(1_000_000 * DECIMAL_MULTIPLIER),
                 beneficiary: OPERATOR
             });
 
