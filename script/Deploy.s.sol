@@ -174,21 +174,16 @@ contract DeployScript is Script, Sphinx {
             REVAutoIssuance[] memory autoIssuances = new REVAutoIssuance[](1);
             autoIssuances[0] = REVAutoIssuance({
                 chainId: PREMINT_CHAIN_ID,
-                count: uint104(50_000 * DECIMAL_MULTIPLIER), // 20% to jbdao, contributors.
+                count: uint104(600_000 * DECIMAL_MULTIPLIER),
                 beneficiary: OPERATOR
             });
 
-            // lt: short. 120 days whole stage. firesale. 30 day cuts. steeper issuance cut. 
-            // start the collection in the future. 7 days-ish.
-            // maybe 360-420 days stage 1
-            // decrease every 60 days for 420 days. 
-            // 10,000 => 2,400 / ETH
             stageConfigurations[0] = REVStageConfig({
                 startsAtOrAfter: uint40(block.timestamp + TIME_UNTIL_START),
                 autoIssuances: autoIssuances,
                 splitPercent: 3800, // 38%
                 splits: splits,
-                initialIssuance: uint112(1000 * DECIMAL_MULTIPLIER),
+                initialIssuance: uint112(10_000 * DECIMAL_MULTIPLIER),
                 issuanceCutFrequency: 60 days,
                 issuanceCutPercent: 380_000_000, // 38%,
                 cashOutTaxRate: 1000, // 0.1
@@ -200,19 +195,19 @@ contract DeployScript is Script, Sphinx {
             REVAutoIssuance[] memory autoIssuances = new REVAutoIssuance[](1);
             autoIssuances[0] = REVAutoIssuance({
                 chainId: PREMINT_CHAIN_ID,
-                count: uint104(110_000 * DECIMAL_MULTIPLIER),
+                count: uint104(1_100_000 * DECIMAL_MULTIPLIER),
                 beneficiary: OPERATOR
             });
 
             // decrease by a smaller percent more frequently. 30 days, 7%-ish.
             stageConfigurations[1] = REVStageConfig({
-                startsAtOrAfter: uint40(stageConfigurations[0].startsAtOrAfter + 600 days),
+                startsAtOrAfter: uint40(stageConfigurations[0].startsAtOrAfter + 360 days),
                 autoIssuances: autoIssuances,
                 splitPercent: 3800, // 38%
                 splits: splits,
                 initialIssuance: 1, // inherit from previous cycle.
-                issuanceCutFrequency: 150 days,
-                issuanceCutPercent: 380_000_000, // 38%
+                issuanceCutFrequency: 21 days,
+                issuanceCutPercent: 70_000_000, // 7%
                 cashOutTaxRate: 1000, // 0.1
                 extraMetadata: 4 // Allow adding suckers.
             });
