@@ -57,7 +57,7 @@ library BannyverseDeploymentLib {
             deployment.revnetId = 10;
         } else if (keccak256(abi.encode(network_name)) == keccak256(abi.encode("arbitrum_sepolia"))) {
             deployment.revnetId = 11;
-        } 
+        }
     }
 
     /// @notice Get the address of a contract that was deployed by the Deploy script.
