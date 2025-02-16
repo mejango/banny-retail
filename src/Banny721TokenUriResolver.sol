@@ -17,7 +17,7 @@ import {Base64} from "lib/base64/base64.sol";
 
 import {IBanny721TokenUriResolver} from "./interfaces/IBanny721TokenUriResolver.sol";
 
-/// @notice Banny asset manager. Stores and shows banny bodys in backgrounds with outfits on.
+/// @notice Banny asset manager. Stores and shows banny bodies in backgrounds with outfits on.
 contract Banny721TokenUriResolver is
     Ownable,
     ERC2771Context,
