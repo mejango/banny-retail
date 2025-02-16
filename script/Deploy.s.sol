@@ -63,7 +63,7 @@ contract DeployScript is Script, Sphinx {
 
     BannyverseRevnetConfig bannyverseConfig;
 
-    uint32 PREMINT_CHAIN_ID = 11_155_111;
+    uint32 PREMINT_CHAIN_ID = 1;
     bytes32 ERC20_SALT = "_BAN_ERC20";
     bytes32 SUCKER_SALT = "_BAN_SUCKER";
     bytes32 HOOK_SALT = "_BAN_HOOK";
