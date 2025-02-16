@@ -238,7 +238,9 @@ contract Banny721TokenUriResolver is
             attributes = string.concat(attributes, '{"trait_type": "Outfits worn", "value": [');
 
             for (uint256 i; i < outfitIds.length; i++) {
-                attributes = string.concat(attributes, '"', _productNameOf(outfitIds[i]), '"');
+                attributes = string.concat(
+                    attributes, '"', _productNameOf(_productOfTokenId({hook: hook, tokenId: outfitIds[i]}).id), '"'
+                );
 
                 // Add a comma if it's not the last outfit.
                 if (i < outfitIds.length - 1) {
@@ -251,12 +253,13 @@ contract Banny721TokenUriResolver is
             if (backgroundId != 0) {
                 extraMetadata = string.concat(extraMetadata, '"backgroundId": ', backgroundId.toString(), ",");
                 attributes = string.concat(
-                    attributes, '{"trait_type": "Background used", "value": "', _productNameOf(backgroundId), '"},'
+                    attributes,
+                    '{"trait_type": "Background used", "value": "',
+                    _productNameOf(_productOfTokenId({hook: hook, tokenId: backgroundId}).id),
+                    '"},'
                 );
             } else {
-                attributes = string.concat(
-                    attributes, '{"trait_type": "Background used", "value": ""},'
-                );
+                attributes = string.concat(attributes, '{"trait_type": "Background used", "value": ""},');
             }
 
             // If the token has an owner, check if the owner has locked the token.
