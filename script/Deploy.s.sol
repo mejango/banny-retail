@@ -72,7 +72,6 @@ contract DeployScript is Script, Sphinx {
     string SYMBOL = "BAN";
     string PROJECT_URI = "ipfs://QmeycQy87h9fb6D2Po9snV7KuK5FtTiLWVrVcB6DKhfEMC";
     string BASE_URI = "ipfs://";
-    string CONTRACT_URI = "";
     uint32 NATIVE_CURRENCY = uint32(uint160(JBConstants.NATIVE_TOKEN));
     uint32 ETH_CURRENCY = JBCurrencyIds.ETH;
     uint8 DECIMALS = 18;
@@ -368,11 +367,11 @@ contract DeployScript is Script, Sphinx {
             suckerDeploymentConfiguration: suckerDeploymentConfiguration,
             hookConfiguration: REVDeploy721TiersHookConfig({
                 baseline721HookConfiguration: JBDeploy721TiersHookConfig({
-                    name: NAME,
-                    symbol: SYMBOL,
+                    name: "Banny Retail",
+                    symbol: "BANNY",
                     baseUri: BASE_URI,
                     tokenUriResolver: IJB721TokenUriResolver(address(0)), // This will be replaced once we know the address.
-                    contractUri: CONTRACT_URI,
+                    contractUri: "ipfs://Qmc9gswv9e4SpHGqxW4uqzkxULchTniTGAYW1TpjXtisYK",
                     tiersConfig: JB721InitTiersConfig({
                         tiers: tiers,
                         currency: ETH_CURRENCY,
