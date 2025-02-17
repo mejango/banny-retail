@@ -222,18 +222,18 @@ contract Banny721TokenUriResolver is
             // Get a reference to each asset ID currently attached to the banny body.
             (uint256 backgroundId, uint256[] memory outfitIds) = assetIdsOf({hook: hook, bannyBodyId: tokenId});
 
-            extraMetadata = '"outfitIds": [';
+            extraMetadata = '"outfitIds": "';
 
             for (uint256 i; i < outfitIds.length; i++) {
                 extraMetadata = string.concat(extraMetadata, outfitIds[i].toString());
 
                 // Add a comma if it's not the last outfit.
                 if (i < outfitIds.length - 1) {
-                    extraMetadata = string.concat(extraMetadata, ",");
+                    extraMetadata = string.concat(extraMetadata, ", ");
                 }
             }
 
-            extraMetadata = string.concat(extraMetadata, "],");
+            extraMetadata = string.concat(extraMetadata, '",');
 
             attributes = string.concat(attributes, '{"trait_type": "Outfits worn", "value": [');
 
