@@ -50,13 +50,13 @@ library BannyverseDeploymentLib {
 
         // // TODO: Update the following after every deploy.
         if (keccak256(abi.encode(network_name)) == keccak256(abi.encode("sepolia"))) {
-            deployment.revnetId = 14;
+            deployment.revnetId = 15;
         } else if (keccak256(abi.encode(network_name)) == keccak256(abi.encode("optimism_sepolia"))) {
-            deployment.revnetId = 11;
-        } else if (keccak256(abi.encode(network_name)) == keccak256(abi.encode("base_sepolia"))) {
-            deployment.revnetId = 11;
-        } else if (keccak256(abi.encode(network_name)) == keccak256(abi.encode("arbitrum_sepolia"))) {
             deployment.revnetId = 12;
+        } else if (keccak256(abi.encode(network_name)) == keccak256(abi.encode("base_sepolia"))) {
+            deployment.revnetId = 12;
+        } else if (keccak256(abi.encode(network_name)) == keccak256(abi.encode("arbitrum_sepolia"))) {
+            deployment.revnetId = 13;
         }
     }
 
