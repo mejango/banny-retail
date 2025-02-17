@@ -70,7 +70,7 @@ contract DeployScript is Script, Sphinx {
     bytes32 RESOLVER_SALT = "_BAN_RESOLVER";
     string NAME = "Banny Network";
     string SYMBOL = "BAN";
-    string PROJECT_URI = "ipfs://QmeycQy87h9fb6D2Po9snV7KuK5FtTiLWVrVcB6DKhfEMC";
+    string PROJECT_URI = "ipfs://QmZVr2NmJYDQd6DBMSAQzHBifkdQxCf4Eu2XojJo3Xc7b1";
     string BASE_URI = "ipfs://";
     uint32 NATIVE_CURRENCY = uint32(uint160(JBConstants.NATIVE_TOKEN));
     uint32 ETH_CURRENCY = JBCurrencyIds.ETH;
@@ -371,7 +371,7 @@ contract DeployScript is Script, Sphinx {
                     symbol: "BANNY",
                     baseUri: BASE_URI,
                     tokenUriResolver: IJB721TokenUriResolver(address(0)), // This will be replaced once we know the address.
-                    contractUri: "ipfs://QmYdfkJXk44QByEFdAuE5sRFYrACh7vAeYmpUzq4usjLvw",
+                    contractUri: "https://jbm.infura-ipfs.io/ipfs/Qmd2hgb1E4caEB51VvoC3GvonhwkCoVyXjJ3zqsCxHPTKK",
                     tiersConfig: JB721InitTiersConfig({
                         tiers: tiers,
                         currency: ETH_CURRENCY,
