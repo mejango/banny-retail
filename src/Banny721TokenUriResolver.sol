@@ -238,14 +238,14 @@ contract Banny721TokenUriResolver is
             attributes = string.concat(attributes, '{"trait_type": "Outfits worn", "value": "');
 
             for (uint256 i; i < outfitIds.length; i++) {
-                JB721Tier memory tier = _productOfTokenId({hook: hook, tokenId: outfitIds[i]});
+                JB721Tier memory product = _productOfTokenId({hook: hook, tokenId: outfitIds[i]});
 
                 attributes = string.concat(
                   attributes, 
                   '{"trait_type": "', 
-                  tier.category, 
+                  product.category, 
                   '", "value": "',
-                  tier.name,
+                  product.name,
                   '"}'
                 );
 
