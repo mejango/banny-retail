@@ -245,7 +245,7 @@ contract Banny721TokenUriResolver is
                   '{"trait_type": "', 
                   product.category, 
                   '", "value": "',
-                  product.name,
+                  _productNameOf(product.id),
                   '"}'
                 );
 
