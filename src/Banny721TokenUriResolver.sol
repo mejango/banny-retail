@@ -235,30 +235,29 @@ contract Banny721TokenUriResolver is
 
             extraMetadata = string.concat(extraMetadata, "],");
 
-            attributes = string.concat(attributes, '{"trait_type": "Outfits worn", "value": "');
-
             for (uint256 i; i < outfitIds.length; i++) {
-                attributes =
-                    string.concat(attributes, _productNameOf(_productOfTokenId({hook: hook, tokenId: outfitIds[i]}).id));
+                JB721Tier memory outfitProduct = _productOfTokenId({hook: hook, tokenId: outfitIds[i]});
 
-                // Add a comma if it's not the last outfit.
-                if (i < outfitIds.length - 1) {
-                    attributes = string.concat(attributes, ", ");
-                }
+                attributes = string.concat(
+                  attributes, 
+                  '{"trait_type": "', 
+                  uint256(outfitProduct.category).toString(), 
+                  '", "value": "',
+                  _productNameOf(outfitProduct.id),
+                  '"},'
+                );
             }
-
-            attributes = string.concat(attributes, '"},');
 
             if (backgroundId != 0) {
                 extraMetadata = string.concat(extraMetadata, '"backgroundId": ', backgroundId.toString(), ",");
                 attributes = string.concat(
                     attributes,
-                    '{"trait_type": "Background used", "value": "',
+                    '{"trait_type": "Background", "value": "',
                     _productNameOf(_productOfTokenId({hook: hook, tokenId: backgroundId}).id),
                     '"},'
                 );
             } else {
-                attributes = string.concat(attributes, '{"trait_type": "Background used", "value": ""},');
+                attributes = string.concat(attributes, '{"trait_type": "Background", "value": ""},');
             }
 
             // If the token has an owner, check if the owner has locked the token.
