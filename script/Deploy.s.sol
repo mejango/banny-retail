@@ -371,7 +371,7 @@ contract DeployScript is Script, Sphinx {
                     symbol: "BANNY",
                     baseUri: BASE_URI,
                     tokenUriResolver: IJB721TokenUriResolver(address(0)), // This will be replaced once we know the address.
-                    contractUri: "ipfs://Qmc9gswv9e4SpHGqxW4uqzkxULchTniTGAYW1TpjXtisYK",
+                    contractUri: "ipfs://QmYdfkJXk44QByEFdAuE5sRFYrACh7vAeYmpUzq4usjLvw",
                     tiersConfig: JB721InitTiersConfig({
                         tiers: tiers,
                         currency: ETH_CURRENCY,
