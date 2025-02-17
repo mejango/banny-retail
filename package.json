@@ -1,6 +1,6 @@
 {
     "name": "@bannyverse/core",
-    "version": "0.0.50",
+    "version": "0.0.51",
     "license": "MIT",
     "repository": {
         "type": "git",
@@ -21,7 +21,6 @@
         "@bananapus/721-hook": "^0.0.32",
         "@bananapus/buyback-hook": "^0.0.27",
         "@bananapus/core": "^0.0.46",
-        "@bananapus/ownable": "^0.0.8",
         "@bananapus/permission-ids": "^0.0.17",
         "@bananapus/suckers": "^0.0.32",
         "@bananapus/swap-terminal": "^0.0.27",

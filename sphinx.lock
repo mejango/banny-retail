@@ -3,6 +3,18 @@
   "format": "sphinx-lock-1.0.0",
   "orgId": "ea165b21-7cdc-4d7b-be59-ecdd4c26bee4",
   "projects": {
+    "banny-testnet": {
+      "projectId": "d09bef61-66ff-4ae0-b0bf-11b8e36f7ac5",
+      "projectName": "banny-testnet",
+      "defaultSafe": {
+        "safeName": "Banny Test Group",
+        "owners": [
+          "0x9C382eEC918e14F4943912F07661D1de286c79ad"
+        ],
+        "threshold": "1",
+        "saltNonce": "0"
+      }
+    },
     "nana-address-registry-testnet": {
       "projectId": "30294927-9380-442f-9e6f-9caf60fa509b",
       "projectName": "nana-address-registry-testnet",
@@ -31,18 +43,6 @@
         ],
         "threshold": "2",
         "saltNonce": "1"
-      }
-    },
-    "banny-testnet": {
-      "projectId": "d09bef61-66ff-4ae0-b0bf-11b8e36f7ac5",
-      "projectName": "banny-testnet",
-      "defaultSafe": {
-        "safeName": "Banny Test Group",
-        "owners": [
-          "0x9C382eEC918e14F4943912F07661D1de286c79ad"
-        ],
-        "threshold": "1",
-        "saltNonce": "0"
       }
     }
   }
