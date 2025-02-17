@@ -3,9 +3,9 @@
   "format": "sphinx-lock-1.0.0",
   "orgId": "ea165b21-7cdc-4d7b-be59-ecdd4c26bee4",
   "projects": {
-    "nana-address-registry-testnet": {
-      "projectId": "30294927-9380-442f-9e6f-9caf60fa509b",
-      "projectName": "nana-address-registry-testnet",
+    "nana-core-testnet": {
+      "projectId": "e45ec646-f618-41fa-adb4-d4f5e5c17bf4",
+      "projectName": "nana-core-testnet",
       "defaultSafe": {
         "safeName": "core-test-safe",
         "owners": [
@@ -30,9 +30,9 @@
         "saltNonce": "0"
       }
     },
-    "nana-core-testnet": {
-      "projectId": "e45ec646-f618-41fa-adb4-d4f5e5c17bf4",
-      "projectName": "nana-core-testnet",
+    "nana-address-registry-testnet": {
+      "projectId": "30294927-9380-442f-9e6f-9caf60fa509b",
+      "projectName": "nana-address-registry-testnet",
       "defaultSafe": {
         "safeName": "core-test-safe",
         "owners": [
