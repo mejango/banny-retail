@@ -241,7 +241,7 @@ contract Banny721TokenUriResolver is
                 attributes = string.concat(
                   attributes, 
                   '{"trait_type": "', 
-                  uint256(outfitProduct.category).toString(), 
+                  _categoryNameOf(outfitProduct.category),
                   '", "value": "',
                   _productNameOf(outfitProduct.id),
                   '"},'
@@ -292,8 +292,6 @@ contract Banny721TokenUriResolver is
             _categoryNameOf(product.category),
             '"}, {"trait_type": "Total supply", "value": "',
             uint256(product.initialSupply).toString(),
-            '"}, {"trait_type": "Remaining supply available", "value": "',
-            uint256(product.remainingSupply).toString(),
             '"}]'
         );
 
