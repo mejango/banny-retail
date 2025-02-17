@@ -72,14 +72,14 @@ contract Drop1Script is Script, Sphinx {
         });
         // Hay field
         names[1] = "Hay Field";
-        svgHashes[1] = bytes32(0xf4586c19941b33c66894e8016a6171a16dd0efdbc65983967c4f1c3c3d6a5dc3);
+        svgHashes[1] = bytes32(0x62f97f668e227ab9d6eaf5bd35504974f3df175ee2d952c39add59b7d141c0de);
         products[1] = JB721TierConfig({
             price: uint104(1 * (10 ** (decimals - 2))),
             initialSupply: 250,
             votingUnits: 0,
             reserveFrequency: 0,
             reserveBeneficiary: address(0),
-            encodedIPFSUri: bytes32(0xddd92c8b60dd5a1406305a3ef9d02fc405d36afc64a94d3e3fcb9063a07a96c9),
+            encodedIPFSUri: bytes32(0x233dd4173ef4ed0f60822a469277bb328b5ae056d8980301f7bd7ad9df780099),
             category: 1,
             discountPercent: 0,
             cannotIncreaseDiscountPercent: false,

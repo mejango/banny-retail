@@ -64,10 +64,10 @@ contract DeployScript is Script, Sphinx {
     BannyverseRevnetConfig bannyverseConfig;
 
     uint32 PREMINT_CHAIN_ID = 1;
-    bytes32 ERC20_SALT = "_BAN_ERC20";
-    bytes32 SUCKER_SALT = "_BAN_SUCKER";
-    bytes32 HOOK_SALT = "_BAN_HOOK";
-    bytes32 RESOLVER_SALT = "_BAN_RESOLVER";
+    bytes32 ERC20_SALT = "_BAN_ERC200";
+    bytes32 SUCKER_SALT = "_BAN_SUCKER0";
+    bytes32 HOOK_SALT = "_BAN_HOOK0";
+    bytes32 RESOLVER_SALT = "_BAN_RESOLVER0";
     string NAME = "Banny Network";
     string SYMBOL = "BAN";
     string PROJECT_URI = "ipfs://QmZVr2NmJYDQd6DBMSAQzHBifkdQxCf4Eu2XojJo3Xc7b1";
@@ -79,7 +79,7 @@ contract DeployScript is Script, Sphinx {
     uint24 BANNY_BODY_CATEGORY = 0;
     address OPERATOR;
     address TRUSTED_FORWARDER;
-    uint256 TIME_UNTIL_START = 7 days;
+    uint256 TIME_UNTIL_START = 15 minutes; // 7 days;
 
     function configureSphinx() public override {
         // TODO: Update to contain revnet devs.
@@ -127,6 +127,7 @@ contract DeployScript is Script, Sphinx {
         // for this reason we can't rely on the simulations block.time and we need a shared timestamp across all
         // simulations.
         uint256 realTimestamp = vm.envUint("START_TIME");
+        // uint256 realTimestamp = 1739830244;  // timestamp hardcoded at time of deploy. 
         if (realTimestamp <= block.timestamp - TIME_UNTIL_START) {
             revert("Something went wrong while setting the 'START_TIME' environment variable.");
         }
