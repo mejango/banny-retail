@@ -79,7 +79,7 @@ contract DeployScript is Script, Sphinx {
     uint24 BANNY_BODY_CATEGORY = 0;
     address OPERATOR;
     address TRUSTED_FORWARDER;
-    uint256 TIME_UNTIL_START = 7 days;
+    uint256 TIME_UNTIL_START = 15 minutes; //7 days;
 
     function configureSphinx() public override {
         // TODO: Update to contain revnet devs.
@@ -126,8 +126,8 @@ contract DeployScript is Script, Sphinx {
         // Because of the cross-chain allowing components of nana-core, all chains require the same start_time,
         // for this reason we can't rely on the simulations block.time and we need a shared timestamp across all
         // simulations.
-        // uint256 realTimestamp = vm.envUint("START_TIME");
-        uint256 realTimestamp = 1739830244;  // timestamp hardcoded at time of deploy. 
+        uint256 realTimestamp = vm.envUint("START_TIME");
+        // uint256 realTimestamp = 1739830244;  // timestamp hardcoded at time of deploy. 
         if (realTimestamp <= block.timestamp - TIME_UNTIL_START) {
             revert("Something went wrong while setting the 'START_TIME' environment variable.");
         }
