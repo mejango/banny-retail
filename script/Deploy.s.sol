@@ -64,10 +64,10 @@ contract DeployScript is Script, Sphinx {
     BannyverseRevnetConfig bannyverseConfig;
 
     uint32 PREMINT_CHAIN_ID = 1;
-    bytes32 ERC20_SALT = "_BAN_ERC20";
-    bytes32 SUCKER_SALT = "_BAN_SUCKER";
-    bytes32 HOOK_SALT = "_BAN_HOOK";
-    bytes32 RESOLVER_SALT = "_BAN_RESOLVER";
+    bytes32 ERC20_SALT = "_BAN_ERC200";
+    bytes32 SUCKER_SALT = "_BAN_SUCKER0";
+    bytes32 HOOK_SALT = "_BAN_HOOK0";
+    bytes32 RESOLVER_SALT = "_BAN_RESOLVER0";
     string NAME = "Banny Network";
     string SYMBOL = "BAN";
     string PROJECT_URI = "ipfs://QmZVr2NmJYDQd6DBMSAQzHBifkdQxCf4Eu2XojJo3Xc7b1";
