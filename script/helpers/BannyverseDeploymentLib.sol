@@ -45,18 +45,20 @@ library BannyverseDeploymentLib {
         returns (BannyverseDeployment memory deployment)
     {
         deployment.resolver = Banny721TokenUriResolver(
-            _getDeploymentAddress(path, "banny-testnet", network_name, "Banny721TokenUriResolver")
+            _getDeploymentAddress(path, "banny-core", network_name, "Banny721TokenUriResolver")
         );
 
         // // TODO: Update the following after every deploy.
         if (keccak256(abi.encode(network_name)) == keccak256(abi.encode("sepolia"))) {
-            deployment.revnetId = 21;
+            deployment.revnetId = 6;
         } else if (keccak256(abi.encode(network_name)) == keccak256(abi.encode("optimism_sepolia"))) {
-            deployment.revnetId = 18;
+            deployment.revnetId = 6;
         } else if (keccak256(abi.encode(network_name)) == keccak256(abi.encode("base_sepolia"))) {
-            deployment.revnetId = 18;
+            deployment.revnetId = 6;
         } else if (keccak256(abi.encode(network_name)) == keccak256(abi.encode("arbitrum_sepolia"))) {
-            deployment.revnetId = 19;
+            deployment.revnetId = 6;
+        } else {
+            deployment.revnetId = 4;
         }
     }
 
