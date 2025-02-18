@@ -239,12 +239,12 @@ contract Banny721TokenUriResolver is
                 JB721Tier memory outfitProduct = _productOfTokenId({hook: hook, tokenId: outfitIds[i]});
 
                 attributes = string.concat(
-                  attributes, 
-                  '{"trait_type": "', 
-                  _categoryNameOf(outfitProduct.category),
-                  '", "value": "',
-                  _productNameOf(outfitProduct.id),
-                  '"},'
+                    attributes,
+                    '{"trait_type": "',
+                    _categoryNameOf(outfitProduct.category),
+                    '", "value": "',
+                    _productNameOf(outfitProduct.id),
+                    '"},'
                 );
             }
 
@@ -450,7 +450,9 @@ contract Banny721TokenUriResolver is
 
         // Add the background if needed.
         if (backgroundId != 0 && shouldIncludeBackgroundOnBannyBody) {
-            contents = string.concat(contents, _svgOf({hook: hook, upc: _productOfTokenId({hook: hook, tokenId: backgroundId}).id}));
+            contents = string.concat(
+                contents, _svgOf({hook: hook, upc: _productOfTokenId({hook: hook, tokenId: backgroundId}).id})
+            );
         }
 
         // Start with the banny body.

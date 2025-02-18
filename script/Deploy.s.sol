@@ -64,10 +64,10 @@ contract DeployScript is Script, Sphinx {
     BannyverseRevnetConfig bannyverseConfig;
 
     uint32 PREMINT_CHAIN_ID = 1;
-    bytes32 ERC20_SALT = "_BAN_ERC2000";
-    bytes32 SUCKER_SALT = "_BAN_SUCKER00";
-    bytes32 HOOK_SALT = "_BAN_HOOK00";
-    bytes32 RESOLVER_SALT = "_BAN_RESOLVER00";
+    bytes32 ERC20_SALT = "_BAN_ERC20_";
+    bytes32 SUCKER_SALT = "_BAN_SUCKER_";
+    bytes32 HOOK_SALT = "_BAN_HOOK_";
+    bytes32 RESOLVER_SALT = "_BAN_RESOLVER_";
     string NAME = "Banny Network";
     string SYMBOL = "BAN";
     string PROJECT_URI = "ipfs://QmZVr2NmJYDQd6DBMSAQzHBifkdQxCf4Eu2XojJo3Xc7b1";
@@ -83,7 +83,7 @@ contract DeployScript is Script, Sphinx {
 
     function configureSphinx() public override {
         // TODO: Update to contain revnet devs.
-        sphinxConfig.projectName = "banny-testnet";
+        sphinxConfig.projectName = "banny-core";
         sphinxConfig.mainnets = ["ethereum", "optimism", "base", "arbitrum"];
         sphinxConfig.testnets = ["ethereum_sepolia", "optimism_sepolia", "base_sepolia", "arbitrum_sepolia"];
     }
@@ -126,8 +126,8 @@ contract DeployScript is Script, Sphinx {
         // Because of the cross-chain allowing components of nana-core, all chains require the same start_time,
         // for this reason we can't rely on the simulations block.time and we need a shared timestamp across all
         // simulations.
-        uint256 realTimestamp = vm.envUint("START_TIME");
-        // uint256 realTimestamp = 1739830244;  // timestamp hardcoded at time of deploy. 
+        // uint256 realTimestamp = vm.envUint("START_TIME");
+        uint256 realTimestamp = 1_739_830_244; // timestamp hardcoded at time of deploy.
         if (realTimestamp <= block.timestamp - TIME_UNTIL_START) {
             revert("Something went wrong while setting the 'START_TIME' environment variable.");
         }
