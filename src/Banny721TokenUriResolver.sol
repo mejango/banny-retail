@@ -450,7 +450,9 @@ contract Banny721TokenUriResolver is
 
         // Add the background if needed.
         if (backgroundId != 0 && shouldIncludeBackgroundOnBannyBody) {
-            contents = string.concat(contents, _svgOf({hook: hook, upc: _productOfTokenId({hook: hook, tokenId: backgroundId}).id}));
+            contents = string.concat(
+                contents, _svgOf({hook: hook, upc: _productOfTokenId({hook: hook, tokenId: backgroundId}).id})
+            );
         }
 
         // Start with the banny body.
