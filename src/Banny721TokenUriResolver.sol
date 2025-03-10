@@ -748,6 +748,7 @@ contract Banny721TokenUriResolver is
 
         // Keep a reference to if certain accessories have been added.
         bool hasNecklace;
+        bool hasHead;
         bool hasMouth;
 
         // Keep a reference to the custom necklace. Needed because the custom necklace is layered differently than the
@@ -794,9 +795,13 @@ contract Banny721TokenUriResolver is
                 hasNecklace = true;
             }
 
+            if (category == _HEAD_CATEGORY) {
+                hasHead = true;
+            } 
+
             if (category == _MOUTH_CATEGORY) {
                 hasMouth = true;
-            } else if (category > _MOUTH_CATEGORY && !hasMouth) {
+            } else if (category > _MOUTH_CATEGORY && !hasMouth && !hasHead) {
                 contents = string.concat(contents, DEFAULT_MOUTH);
                 hasMouth = true;
             }
