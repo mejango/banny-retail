@@ -797,7 +797,7 @@ contract Banny721TokenUriResolver is
 
             if (category == _HEAD_CATEGORY) {
                 hasHead = true;
-            } 
+            }
 
             if (category == _MOUTH_CATEGORY) {
                 hasMouth = true;
